@@ -19,10 +19,20 @@ class GenreController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $genres = $this->genres->all();
+        $genres = $this->genres->filter(
+            filters: $request->only(['search', 'is_active']),
+            sortBy: $request->input('sort_by', 'name'),
+            order: $request->input('order', 'asc'),
+        );
         return $this->successResponse(GenreResource::collection($genres));
+    }
+
+    public function showBySlug(string $slug)
+    {
+        $genre = $this->genres->findBySlugOrFail($slug);
+        return $this->successResponse(new GenreResource($genre));
     }
 
     /**
@@ -32,6 +42,12 @@ class GenreController extends Controller
     {
         $genre = $this->genres->create($request->validated());
         return $this->successResponse(new GenreResource($genre), "Género creado exitosamente", 201);
+    }
+
+    public function restore(int $id)
+    {
+        $genre = $this->genres->restore($id);
+        return $this->successResponse(new GenreResource($genre), "Género restaurado exitosamente", 200);
     }
 
     /**
