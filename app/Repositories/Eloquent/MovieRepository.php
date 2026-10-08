@@ -34,11 +34,11 @@ class MovieRepository extends BaseRepository implements MovieRepositoryInterface
         });
 
         //SUB CONSULTA
-        $query->when($filters['genre_id'] ?? null, function ($q, $genreId) 
+        $query->when($filters['genre_id'] ?? null,function($q, $genreId)
         {
-            return $q->whereHas('genres', function ($subQuery) use ($genreId)
+            return $q->whereHas('genres',function($subQuery) use ($genreId)
             {
-                return $subQuery->when('genres.id', $genreId);
+                $subQuery->where('genres.id',$genreId);
             });
         });
         $sortColumn = in_array($sortBy, self::SORTABLE) ? $sortBy : 'title';
