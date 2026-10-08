@@ -38,7 +38,7 @@ class MovieRepository extends BaseRepository implements MovieRepositoryInterface
         {
             return $q->whereHas('genres', function ($subQuery) use ($genreId)
             {
-                $subQuery->when('genres.id', $genreId);
+                return $subQuery->when('genres.id', $genreId);
             });
         });
         $sortColumn = in_array($sortBy, self::SORTABLE) ? $sortBy : 'title';
