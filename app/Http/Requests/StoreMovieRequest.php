@@ -23,7 +23,7 @@ class StoreMovieRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255', 'unique:movies,name'],
+            'title' => ['required', 'string', 'max:255', 'unique:movies,title'],
             'year' => ['required', 'integer', 'between:1888,2100'],
             'synopsis' => ['nullable', 'string'],
             'rating' => ['nullable', 'numeric', 'min:0', 'max:10'],
