@@ -59,7 +59,7 @@ it('returns user with valid token on me', function () {
     $user = User::factory()->create();
     /** @var TestCase $this */
     $this->actingAs($user, 'api')
-        ->getJson('/api/auth:api/me')
+        ->getJson('/api/auth/me')
         ->assertStatus(200)
         ->assertJsonPath('data.email', $user->email);
 });
@@ -68,6 +68,6 @@ it('succeeds with valid token on logout', function () {
     $user = User::factory()->create();
     /** @var TestCase $this */
     $this->actingAs($user, 'api')
-        ->postJson('/api/auth:api/logout')
+        ->postJson('/api/auth/logout')
         ->assertStatus(200);
 });

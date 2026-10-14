@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -44,7 +45,12 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function admin(): User
 {
-    // ..
+    return User::factory()->create(['role' => 'admin']);
+}
+
+function editor(): User
+{
+    return User::factory()->create(['role' => 'editor']);
 }

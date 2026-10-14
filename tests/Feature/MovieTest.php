@@ -30,7 +30,7 @@ it('creates a movie with auto slug on store', function () {
     $payload = ['title' => 'Chuky', 'year' => 1988, 'rating' => 8, 'duration' => 90];    
 
     /** @var TestCase $this */
-    $response = $this->postJson("/api/movies", $payload);
+    $response = $this->actingAs(editor(), 'api')->postJson("/api/movies", $payload);
 
     $response->assertStatus(201)
     ->assertJsonPath('data.title', 'Chuky')
@@ -43,7 +43,7 @@ it('modifies a movie with auto slug on update', function () {
     $movie = Movie::factory()->create(['title' => 'Chuky', 'year' => 1988, 'rating' => 8]);    
 
     /** @var TestCase $this */
-    $response = $this->putJson("/api/movies/{$movie->id}", ["title" => "Chucky"]);
+    $response = $this->actingAs(editor(), 'api')->putJson("/api/movies/{$movie->id}", ["title" => "Chucky"]);
 
     $response->assertStatus(200)
     ->assertJsonPath('data.title', 'Chucky')
@@ -55,7 +55,7 @@ it('soft deletes a movie on destroy', function () {
     $movie = Movie::factory()->create();    
 
     /** @var TestCase $this */
-    $response = $this->deleteJson("/api/movies/{$movie->id}");
+    $response = $this->actingAs(admin(), 'api')->deleteJson("/api/movies/{$movie->id}");
 
     $this->assertSoftDeleted('movies', ['id' => $movie->id]);
 });
@@ -69,7 +69,7 @@ it('syncs genres when provided on store', function () {
                 'genre_ids' => $genre_ids];    
 
     /** @var TestCase $this */
-    $response = $this->postJson("/api/movies", $payload);
+    $response = $this->actingAs(editor(), 'api')->postJson("/api/movies", $payload);
 
     $response->assertCreated();
 
@@ -84,7 +84,7 @@ it('validates genre_ids exist on store', function () {
                 'genre_ids' => [999]];    
 
     /** @var TestCase $this */
-    $response = $this->postJson("/api/movies", $payload);
+    $response = $this->actingAs(editor(), 'api')->postJson("/api/movies", $payload);
     $response->assertUnprocessable()
         ->assertJsonPath('message', 'El campo genre_ids.0 no existe.')
         ->assertJsonValidationErrors(['genre_ids.0']);

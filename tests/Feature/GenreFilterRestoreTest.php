@@ -77,7 +77,7 @@ it('restores a soft deleted genre', function () {
     $this->assertSoftDeleted('genres', ['id' => $genre->id]);
 
     /** @var TestCase $this */
-    $this->postJson('/api/genres/'.$genre->id.'/restore')
+    $this->actingAs(admin(), 'api')->postJson('/api/genres/'.$genre->id.'/restore')
         ->assertStatus(200);
 
     $this->assertDatabaseHas('genres', ['id' => $genre->id, 'deleted_at' => null]);
