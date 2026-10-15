@@ -6,6 +6,7 @@ use App\Models\Genre;
 use App\Repositories\Contracts\GenreRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class GenreRepository extends BaseRepository implements GenreRepositoryInterface
 {
@@ -22,7 +23,10 @@ class GenreRepository extends BaseRepository implements GenreRepositoryInterface
     {
         $sortBy = in_array($sortBy, self::SORTABLE) ? $sortBy : 'name';
         $order = strtolower($order) === 'desc' ? 'desc' : 'asc';
-        return Genre::query()
+        $key = 'genres.index.' . md5(serialize(compact('filters', 'sortBy', 'order')));
+        $genresJson = Cache::remember($key, now()->addMinutes(30), function() use($filters, $sortBy, $order)
+        {
+            return Genre::query()
             ->when(isset($filters['search']),
                 fn($q) => $q->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($filters['search']).'%'])
             )
@@ -30,7 +34,11 @@ class GenreRepository extends BaseRepository implements GenreRepositoryInterface
                 fn($q) => $q->where('is_active', filter_var($filters['is_active'], FILTER_VALIDATE_BOOLEAN))
             )
             ->orderBy($sortBy ,$order)
-            ->get();
+            ->get()
+            ->toJson();
+        });
+
+        return Genre::hydrate(json_decode($genresJson, true));
     }
 
     public function findBySlugOrFail(string $slug): Model
