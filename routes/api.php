@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\PosterController;
 use Illuminate\Support\Facades\Route;
 
 // ---------------  PÚBLICAS ---------------------
@@ -50,6 +51,7 @@ Route::middleware('auth:api')->group(function() {
     Route::post('movies', [MovieController::class, 'store']);
     Route::put('movies/{movie}', [MovieController::class, 'update']);
     Route::patch('movies/{movie}', [MovieController::class, 'update']);
+    Route::post('movies/{movie}/poster', [PosterController::class, 'store']);
   });
   Route::middleware('role:admin')->group(function() {
     Route::delete('movies/{movie}', [MovieController::class, 'destroy']);
