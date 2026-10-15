@@ -21,11 +21,12 @@ class MovieController extends Controller
      */
     public function index(Request $request)
     {
+        $perPage = max(1, min(50, $request->input('per_page', 15)));
         $filters = $request->only(['search', 'year', 'min_rating', 'genre_id']);
         $sortBy = $request->input('sort_by', 'title');
         $order = $request->input('order', 'asc');
-        $movies = $this->movieRepository->filter($filters, $sortBy, $order);
-        return $this->successResponse(MovieResource::collection($movies));
+        $movies = $this->movieRepository->filter($filters, $sortBy, $order, $perPage);
+        return MovieResource::collection($movies);
     }
 
     /**
